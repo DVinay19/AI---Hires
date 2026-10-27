@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0c1110">
+    <meta name="description" content="AI Hires — Resume analysis and professional resume building.">
+    <title>AI Hires — Career Intelligence</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <a class="brand" href="/" aria-label="AI Hires home">
+            <span class="brand-icon">AH</span>
+            <span>AI Hires<span class="brand-dot">.</span></span>
+        </a>
+
+        <div class="side-caption">CAREER INTELLIGENCE</div>
+
+        <div class="side-label">WORKSPACE</div>
+        <button class="nav-item active" type="button" data-page="analyzer">
+            <span>01</span> Resume Analyzer
+        </button>
+        <button class="nav-item" type="button" data-page="builder">
+            <span>02</span> Resume Studio
+        </button>
+
+        <div class="sidebar-bottom">
+            <span class="status-dot"></span> Local workspace
+            <p>Build your next career move with clarity.</p>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div class="breadcrumb">
+                Workspace <span>/</span> <b id="crumb">Resume Analyzer</b>
+            </div>
+            <div class="top-status"><span class="status-dot"></span> CAREER WORKSPACE</div>
+        </header>
+
+        <section class="page-heading">
+            <div>
+                <div class="eyebrow">YOUR CAREER WORKSPACE</div>
+                <h1 id="page-title">Make your next move count.</h1>
+                <p id="page-subtitle">
+                    Understand your resume. Find the gaps. Move forward with clarity.
+                </p>
+            </div>
+            <div class="heading-mark" id="heading-mark">AH / 01</div>
+        </section>
+
+        <!-- RESUME ANALYZER -->
+        <section id="analyzer-page" class="workspace">
+            <div class="section-title">
+                <span>01</span>
+                <div>
+                    <h2>Resume Analyzer</h2>
+                    <p>Compare your profile against the role you want.</p>
+                </div>
+            </div>
+
+            <form id="analysis-form">
+                <div class="form-grid">
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <span class="step">A</span>
+                            <div>
+                                <h3>Your resume</h3>
+                                <p>Upload a PDF or paste your resume text.</p>
+                            </div>
+                        </div>
+
+                        <label class="upload-zone" for="resume_pdf">
+                            <span class="upload-icon">↑</span>
+                            <strong id="file-name">Choose a resume PDF</strong>
+                            <span>PDF format · Maximum 8 MB</span>
+                            <input id="resume_pdf" name="resume_pdf"
+                                   type="file" accept=".pdf,application/pdf">
+                        </label>
+
+                        <div class="or-divider"><span>OR PASTE TEXT</span></div>
+
+                        <label class="field-label" for="resume_text">Resume content</label>
+                        <textarea id="resume_text" name="resume_text" rows="7"
+                            placeholder="Paste your resume content here..."></textarea>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <span class="step">B</span>
+                            <div>
+                                <h3>Target position</h3>
+                                <p>Provide the job details for comparison.</p>
+                            </div>
+                        </div>
+
+                        <label class="field-label" for="job_title">Target job title</label>
+                        <input id="job_title" name="job_title"
+                               value="Python Developer" required>
+
+                        <label class="field-label" for="job_description">Job description</label>
+                        <textarea id="job_description" name="job_description" rows="11"
+                            placeholder="Paste the job responsibilities and required skills..."
+                            required></textarea>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <span class="privacy-note">
+                        Your resume is processed by the configured local application.
+                    </span>
+                    <button class="btn btn-primary" id="analyze-button" type="submit">
+                        Analyze resume <span>↗</span>
+                    </button>
+                </div>
+            </form>
+
+            <div id="analysis-error" class="message error hidden" role="alert"></div>
+            <div id="analysis-loading" class="message hidden" role="status">
+                Analyzing your resume…
+            </div>
+
+            <section id="results" class="hidden">
+                <div class="section-title result-title">
+                    <span>02</span>
+                    <div>
+                        <h2>Analysis overview</h2>
+                        <p>Review your resume against the supplied job description.</p>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <article class="metric">
+                        <span>OVERALL MATCH ESTIMATE</span>
+                        <strong id="overall">—</strong>
+                        <small>Heuristic score</small>
+                    </article>
+                    <article class="metric">
+                        <span>SKILL COVERAGE</span>
+                        <strong id="skill-score">—</strong>
+                        <small>Recognized job skills</small>
+                    </article>
+                    <article class="metric">
+                        <span>TEXT SIMILARITY</span>
+                        <strong id="similarity">—</strong>
+                        <small>TF-IDF comparison</small>
+                    </article>
+                    <article class="metric">
+                        <span>RESUME WORDS</span>
+                        <strong id="word-count">—</strong>
+                        <small>Extracted content</small>
+                    </article>
+                </div>
+
+                <div class="results-grid">
+                    <article class="panel">
+                        <h3>Matched skills</h3>
+                        <div id="matched" class="tag-list"></div>
+                    </article>
+                    <article class="panel">
+                        <h3>Potential skill gaps</h3>
+                        <div id="missing" class="tag-list"></div>
+                    </article>
+                </div>
+
+                <article class="panel recommendation-panel">
+                    <h3>Recommended actions</h3>
+                    <ol id="suggestions"></ol>
+                </article>
+
+                <p class="disclaimer">
+                    Scores are estimates, not official ATS results or predictions
+                    of hiring outcomes. A missing skill means it was not detected
+                    in the supplied text.
+                </p>
+
+                <button class="btn btn-secondary" id="download-analysis" type="button">
+                    Download analysis PDF ↓
+                </button>
+            </section>
+        </section>
+
+        <!-- AI RESUME BUILDER -->
+        <section id="builder-page" class="workspace hidden">
+            <div class="section-title">
+                <span>01</span>
+                <div>
+                    <h2>Resume Studio</h2>
+                    <p>Build a clear, job-focused resume from your actual experience.</p>
+                </div>
+            </div>
+
+            <form id="builder-form">
+                <div class="builder-grid">
+
+                    <div class="panel builder-form-panel">
+                        <div class="panel-heading">
+                            <span class="step">A</span>
+                            <div>
+                                <h3>Profile details</h3>
+                                <p>Include accurate, verifiable information.</p>
+                            </div>
+                        </div>
+
+                        <label class="field-label" for="name">Full name *</label>
+                        <input id="name" required placeholder="Your full name">
+
+                        <div class="two-fields">
+                            <div>
+                                <label class="field-label" for="email">Email</label>
+                                <input id="email" type="email" placeholder="you@example.com">
+                            </div>
+                            <div>
+                                <label class="field-label" for="phone">Phone</label>
+                                <input id="phone" placeholder="+91 ...">
+                            </div>
+                        </div>
+
+                        <label class="field-label" for="location">Location</label>
+                        <input id="location" placeholder="City, Country">
+
+                        <div class="two-fields">
+                            <div>
+                                <label class="field-label" for="linkedin">LinkedIn URL</label>
+                                <input id="linkedin" placeholder="linkedin.com/in/...">
+                            </div>
+                            <div>
+                                <label class="field-label" for="github">GitHub URL</label>
+                                <input id="github" placeholder="github.com/...">
+                            </div>
+                        </div>
+
+                        <label class="field-label" for="target_role">Target role</label>
+                        <input id="target_role" value="Python Developer">
+
+                        <label class="field-label" for="target_description">Job description</label>
+                        <textarea id="target_description" rows="4"
+                            placeholder="Paste the target job description..."></textarea>
+
+                        <label class="field-label" for="summary">Professional summary</label>
+                        <textarea id="summary" rows="4"
+                            placeholder="Your background, strengths and career direction..."></textarea>
+
+                        <label class="field-label" for="skills">Skills</label>
+                        <textarea id="skills" rows="3"
+                            placeholder="Python, SQL, Flask, Git..."></textarea>
+
+                        <label class="field-label" for="projects">Projects</label>
+                        <textarea id="projects" rows="4"
+                            placeholder="Project, technologies, contributions and real results..."></textarea>
+
+                        <label class="field-label" for="experience">Experience / internships</label>
+                        <textarea id="experience" rows="4"
+                            placeholder="Role, organization, dates and responsibilities..."></textarea>
+
+                        <label class="field-label" for="education">Education</label>
+                        <textarea id="education" rows="3"
+                            placeholder="Degree, institution, graduation year..."></textarea>
+
+                        <label class="field-label" for="certifications">Certifications</label>
+                        <textarea id="certifications" rows="2"
+                            placeholder="Relevant certifications..."></textarea>
+
+                        <button class="btn btn-primary full-width" type="submit">
+                            Update resume preview ↗
+                        </button>
+                    </div>
+
+                    <div class="preview-column">
+                        <div class="preview-toolbar">
+                            <div>
+                                <span class="live-dot"></span> LIVE PREVIEW
+                                <small>Review before downloading</small>
+                            </div>
+                            <span class="preview-label">A4 DOCUMENT</span>
+                        </div>
+
+                        <div id="resume-preview" class="resume-document">
+                            <div class="resume-placeholder">
+                                <span>AH</span>
+                                <h3>Your resume starts here</h3>
+                                <p>Complete the profile form to create your document preview.</p>
+                            </div>
+                        </div>
+
+                        <div id="builder-error" class="message error hidden" role="alert"></div>
+                        <div id="skill-gaps" class="message hidden" role="status"></div>
+
+                        <div class="export-actions">
+                            <button class="btn btn-primary" id="download-resume" type="button">
+                                Download PDF ↓
+                            </button>
+                            <button class="btn btn-secondary" id="download-html" type="button">
+                                Export HTML
+                            </button>
+                        </div>
+
+                        <p class="disclaimer">
+                            The current builder formats the information you provide.
+                            AI-generated writing requires a separate model integration.
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+
+        <footer class="footer">
+            <span>AI HIRES <span class="brand-dot">/</span> CAREER INTELLIGENCE</span>
+            <span>Built for your next opportunity.</span>
+        </footer>
+    </main>
+</div>
+</body>
+</html>

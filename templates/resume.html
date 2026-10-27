@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>{{ name|e }} — Resume</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 32px;
+            background: #eef2ef;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #24372d;
+        }
+
+        .resume {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 46px;
+            background: #fff;
+            border-top: 6px solid #176b55;
+            box-shadow: 0 8px 30px #00000012;
+            overflow-wrap: anywhere;
+        }
+
+        h1 {
+            margin: 0;
+            color: #173d30;
+            font-size: 30px;
+            letter-spacing: -0.6px;
+        }
+
+        .contact {
+            margin: 10px 0 28px;
+            color: #66786d;
+            font-size: 11px;
+            line-height: 1.9;
+            overflow-wrap: anywhere;
+        }
+
+        section {
+            margin: 22px 0;
+            break-inside: avoid;
+        }
+
+        h2 {
+            padding-bottom: 7px;
+            border-bottom: 1px solid #dbe6dd;
+            color: #176b55;
+            font-size: 12px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .content {
+            color: #36463b;
+            font-size: 12px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 12mm;
+            }
+
+            body {
+                padding: 0;
+                background: #fff;
+            }
+
+            .resume {
+                max-width: none;
+                padding: 24px;
+                box-shadow: none;
+                border-top-width: 4px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .resume {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="resume">
+        <h1>{{ name|e }}</h1>
+
+        <div class="contact">
+            {{ email|e }}{% if phone %} · {{ phone|e }}{% endif %}{% if location %} · {{ location|e }}{% endif %}
+            {% if linkedin %}<br>{{ linkedin|e }}{% endif %}
+            {% if github %}<br>{{ github|e }}{% endif %}
+        </div>
+
+        {% for heading, value in [
+            ('Professional Summary', summary),
+            ('Skills', skills),
+            ('Experience', experience),
+            ('Projects', projects),
+            ('Education', education),
+            ('Certifications', certifications)
+        ] %}
+            {% if value %}
+                <section>
+                    <h2>{{ heading }}</h2>
+                    <div class="content">{{ value|e }}</div>
+                </section>
+            {% endif %}
+        {% endfor %}
+    </main>
+</body>
+</html>
